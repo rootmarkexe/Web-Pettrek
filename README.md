@@ -1,7 +1,4 @@
 # Web-Pettrek
-<p align="center">
-      <img src="https://i.ibb.co/YTVLFW5/4205287e-613e-4b29-abc1-e7c2a407dc02.jpg">
-</p>
 
 # Ссылка Jira Trello
 <p>
