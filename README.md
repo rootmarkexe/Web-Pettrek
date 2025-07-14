@@ -1,4 +1,3 @@
-# Web-Pettrek
 
 # Ссылка Jira Trello
 <p>
