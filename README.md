@@ -10,5 +10,5 @@
 
  # Ссылка на дизайн
  <p>
-  <a href="https://www.figma.com/design/6HmkzsrJS5I2WqiOIT5bnp/Pettrek?node-id=0-1&p=f">Pettrik Trello</a>
+  <a href="https://www.figma.com/design/6HmkzsrJS5I2WqiOIT5bnp/Pettrek?node-id=0-1&p=f">Pettrik Figma</a>
 </p>
