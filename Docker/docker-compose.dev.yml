@@ -1,0 +1,85 @@
+
+services:
+  redis:
+    image: redis:latest
+    container_name: redis
+
+    env_file:
+      - .env
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    restart: unless-stopped
+    healthcheck: # Добавляем healthcheck для Redis
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 1s
+      timeout: 3s
+      retries: 5
+      start_period: 5s # Даем Redis немного времени на запуск перед проверками
+
+  backend:
+    build:
+      context: ../apps/backend
+    container_name: backend
+    env_file:
+      - .env
+    volumes:
+      - "/dev/random:/dev/random:rw"
+      - "/dev/urandom:/dev/urandom:rw"
+    ports:
+      - "8082:8082"
+    environment:
+      - TZ=Asia/Krasnoyarsk
+      - JAVA_OPTS=-Djava.security.egd=file:/dev/./urandom -Dsecurerandom.source=file:/dev/urandom -Dsecurerandom.strongAlgorithms=NativePRNGBlocking
+      - application.jwtSecret=${JWT_SECRET}
+      - application.accessTokenExpirationInMs=${ACCESS_TOKEN_EXPIRATION_MS}
+      - application.refreshTokenExpirationInMs=${REFRESH_TOKEN_EXPIRATION_MS}
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/${POSTGRES_DB}
+      - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_DATABASE=${REDIS_DATABASE}
+      - APP_BASE_URL=${APP_BASE_URL}
+      - SPRING_MAIL_HOST=${MAIL_HOST}
+      - SPRING_MAIL_PORT=${MAIL_PORT}
+      - SPRING_MAIL_USERNAME=${MAIL_USERNAME}
+      - SPRING_MAIL_PASSWORD=${MAIL_PASSWORD}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:8082/actuator/health || exit 1" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+  postgres:
+    image: postgres:15-alpine
+    container_name: postgres
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    healthcheck: # Добавляем healthcheck для Postgres
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s # Даем Postgres немного времени на запуск
+
+
+volumes:
+  postgres-data:
+  redis-data:
