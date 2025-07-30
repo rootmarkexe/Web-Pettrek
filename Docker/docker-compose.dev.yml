@@ -11,13 +11,6 @@ services:
     volumes:
       - redis-data:/data
     restart: unless-stopped
-    healthcheck: # Добавляем healthcheck для Redis
-      test: [ "CMD", "redis-cli", "ping" ]
-      interval: 1s
-      timeout: 3s
-      retries: 5
-      start_period: 5s # Даем Redis немного времени на запуск перед проверками
-
   backend:
     build:
       context: ../apps/backend
@@ -47,17 +40,9 @@ services:
       - SPRING_MAIL_USERNAME=${MAIL_USERNAME}
       - SPRING_MAIL_PASSWORD=${MAIL_PASSWORD}
     depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
+      - postgres
+      - redis
     restart: unless-stopped
-    healthcheck:
-      test: [ "CMD-SHELL", "curl -f http://localhost:8082/actuator/health || exit 1" ]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
   postgres:
     image: postgres:15-alpine
     container_name: postgres
@@ -72,13 +57,6 @@ services:
     ports:
       - "5432:5432"
     restart: unless-stopped
-    healthcheck: # Добавляем healthcheck для Postgres
-      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-      start_period: 10s # Даем Postgres немного времени на запуск
-
 
 volumes:
   postgres-data:
