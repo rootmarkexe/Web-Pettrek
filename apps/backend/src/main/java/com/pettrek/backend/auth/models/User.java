@@ -3,6 +3,8 @@ package com.pettrek.backend.auth.models;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import java.time.LocalDate;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Entity
 @Table(name = "auth_users")
@@ -13,16 +15,28 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "password",nullable = false)
     private String password;
 
-    @Column(unique = true, nullable = false)
+    @Column(name = "Email", unique = true, nullable = false)
     private String email;
 
-    @Column(nullable = false)
+    @Column(name = "isEnabled", nullable = false)
     private boolean enabled = false;
 
     private String verificationCode;
 
     private String resetPasswordToken;
+    @Column(name = "Name",nullable=false)
+    private String name;
+
+    @Column(name="secondName", nullable = false)
+    private String secondName;
+
+    @Column(name="surname", nullable = true)
+    private String surname;
+
+    @Column(name="dateOfBirth", nullable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate dateOfBirth;
 }

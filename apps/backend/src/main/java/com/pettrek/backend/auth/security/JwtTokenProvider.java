@@ -12,8 +12,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
-
-
+import io.jsonwebtoken.security.Keys;
+import javax.crypto.SecretKey;
 import io.jsonwebtoken.security.SignatureException;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 @Getter
 
 public class JwtTokenProvider {
+
     @Value("${application.jwtSecret}")
     private String jwtSecret;
 
@@ -30,49 +31,65 @@ public class JwtTokenProvider {
 
     @Value("${application.refreshTokenExpirationInMs}")
     private Long refreshTokenExpirationMs;
-
+    private final SecretKey key;
     private static final Logger logger = LoggerFactory.getLogger(JwtTokenProvider.class);
 
     private final RedisTemplate<String, String> redisTemplate;
 
-    public JwtTokenProvider(RedisTemplate<String, String> redisTemplate) {
+    public JwtTokenProvider(
+            RedisTemplate<String, String> redisTemplate,
+            @Value("${application.jwtSecret}") String jwtSecret) {
+
         this.redisTemplate = redisTemplate;
+        this.key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
     }
 
     public String generateAccessToken(Authentication authentication){
+        logger.trace("Start token generation");
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+        logger.trace("Principal obtained");
         Date now = new Date();
+        logger.trace("Current date: {}", now);
         Date expiryDate = new Date(now.getTime() + accessTokenExpirationInMs);
+        logger.trace("Expiry date: {}", expiryDate);
 
-        return Jwts.builder()
+        logger.trace("Building JWT...");
+        String token = Jwts.builder()
                 .setSubject(Long.toString(userPrincipal.getId()))
-                .setIssuedAt(new Date())
+                .setIssuedAt(now)
                 .setExpiration(expiryDate)
-                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
+        logger.trace("Token generated successfully");
+        return token;
     }
 
     public String generateRefreshToken(Authentication authentication){
-        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-        Date now = new Date();
-        Date expiryDate = new Date(now.getTime() - refreshTokenExpirationMs);
+        try {
+            UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+            Date now = new Date();
+            Date expiryDate = new Date(now.getTime() + refreshTokenExpirationMs);
 
-        String refreshToken =  Jwts.builder()
-                .setSubject(Long.toString(userPrincipal.getId()))
-                .setIssuedAt(new Date())
-                .setExpiration(expiryDate)
-                .signWith(SignatureAlgorithm.HS512, jwtSecret)
-                .claim("token_type","refresh")
-                .compact();
+            String refreshToken = Jwts.builder()
+                    .setSubject(Long.toString(userPrincipal.getId()))
+                    .setIssuedAt(now)
+                    .setExpiration(expiryDate)
+                    .signWith(key, SignatureAlgorithm.HS512)
+                    .claim("token_type", "refresh")
+                    .compact();
 
-        redisTemplate.opsForValue().set(
-                "refresh:" + userPrincipal.getId(),
-                refreshToken,
-                refreshTokenExpirationMs,
-                TimeUnit.MILLISECONDS
-        );
+//            redisTemplate.opsForValue().set(
+//                    "refresh:" + userPrincipal.getId(),
+//                    refreshToken,
+//                    refreshTokenExpirationMs,
+//                    TimeUnit.MILLISECONDS
+//            );
+            logger.debug("Saved refresh token in Redis: {}");
 
-        return refreshToken;
+        return refreshToken;}catch (Exception e) {
+            logger.error("Refresh token generation failed", e);
+            return "dcsdsdf";
+        }
     }
     public boolean validateRefreshToken(Long userId, String refreshToken) {
         String storedToken = redisTemplate.opsForValue().get("refresh:" + userId);
@@ -86,17 +103,22 @@ public class JwtTokenProvider {
         redisTemplate.delete("refresh:" + userId);
     }
     public Long getUserIdFromJWT(String token){
-        Claims claims = Jwts.parser()
-                .setSigningKey(jwtSecret)
-                .parseClaimsJws(token)
-                .getBody();
-        return Long.parseLong(claims.getSubject());
+        return Long.parseLong(
+                Jwts.parserBuilder()
+                        .setSigningKey(key)
+                        .build()
+                        .parseClaimsJws(token)
+                        .getBody()
+                        .getSubject()
+        );
     }
-    
-    
+
     public void validateToken(String authToken) {
         try {
-            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
+            Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(authToken);
         } catch (MalformedJwtException | IllegalArgumentException | SignatureException ex) {
             throw new JwtTokenInvalidException();
         } catch (ExpiredJwtException ex) {

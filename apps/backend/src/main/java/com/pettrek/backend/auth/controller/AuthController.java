@@ -50,7 +50,7 @@ public class AuthController {
     )
     @ApiResponse(
             responseCode = "400",
-            description = "Невалидные данные",
+            description = "Невалидный email",
             content = @Content(
                     mediaType = "application/json",
                     examples = {
@@ -59,7 +59,25 @@ public class AuthController {
                                     value = """
                                             {
                                                 "status": 400,
-                                                "message": "Неверный формат email"
+                                                "message": "email: должно иметь формат адреса электронной почты",
+                                                "timestamp": "2025-07-29T15:11:40.3309628"
+                                            }
+                                            """
+                            )
+                    }))
+    @ApiResponse(
+            responseCode = "400",
+            description = "Невалидный пароль",
+            content = @Content(
+                    mediaType = "application/json",
+                    examples = {
+                            @ExampleObject(
+                                    name = "Тело ответа",
+                                    value = """
+                                            {
+                                                "status": 400,
+                                                "message": "password: размер должен находиться в диапазоне от 6 до 30",
+                                                "timestamp": "2025-07-29T15:11:40.3309628"
                                             }
                                             """
                             )
@@ -75,7 +93,8 @@ public class AuthController {
                                     value = """
                                             {
                                                 "status": 401,
-                                                "message": "Неверный email или пароль"
+                                                "message": "Неверный email или пароль",
+                                                "timestamp": "2025-07-29T15:11:40.3309628"
                                             }
                                             """
                             )
@@ -93,7 +112,8 @@ public class AuthController {
                                     value = """
                                             {
                                                 "status": 500,
-                                                "message": "Внутренняя ошибка сервера"
+                                                "message": "Внутренняя ошибка сервера",
+                                                "timestamp": "2025-07-29T15:11:40.3309628"
                                             }
                                             """
                             )
@@ -191,9 +211,13 @@ public class AuthController {
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest){
         User user = authService.registerUser(
                 signUpRequest.email(),
-                signUpRequest.password()
+                signUpRequest.password(),
+                signUpRequest.name(),
+                signUpRequest.secondName(),
+                signUpRequest.surname(),
+                signUpRequest.dateOfBirth()
         );
-        return ResponseEntity.ok("Пользователь успешно зарегистрирован!");
+        return ResponseEntity.ok(new ApiResponses(200, "Проверьте вашу почту"));
     }
     @GetMapping("/verify")
     @Operation(summary = "Верификация email", description = "Подтверждает email пользователя по коду")
@@ -322,7 +346,8 @@ public class AuthController {
     )
     public ResponseEntity<?> requestPasswordReset(@Valid @RequestBody PasswordResetRequest passwordResetRequest) {
         authService.requestPasswordReset(passwordResetRequest.email());
-        return ResponseEntity.ok("Ссылка для сброса пароля отправлена на почту");
+        ApiResponses response = new ApiResponses(200, "Ссылка для сброса пароля отправлена на почту");
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/password/reset")
@@ -525,6 +550,8 @@ public class AuthController {
     public ResponseEntity<?> logout(@RequestHeader("Authorization") String authHeader) {
         String refreshToken = authHeader.substring(7);
         authService.logout(refreshToken);
-        return ResponseEntity.ok("Пользователь успешно вышел!");
+        ApiResponses response = new ApiResponses(200,"Пользователь успешно вышел!");
+        return ResponseEntity.ok(response);
     }
+
 }

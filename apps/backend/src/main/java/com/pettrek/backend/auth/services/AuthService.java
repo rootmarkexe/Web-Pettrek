@@ -18,12 +18,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Service
 @AllArgsConstructor
 public class AuthService {
+
     private final AuthenticationManager authenticationManager;
     private final UserRepo userRepo;
     private final PasswordEncoder passwordEncoder;
@@ -60,18 +61,22 @@ public class AuthService {
                 jwtTokenProvider.getAccessTokenExpirationInMs()
         );}catch(BadCredentialsException ex) {throw new InvalidCredentialsException();}
     }
-
-    public User registerUser(String email, String password){
+    @Transactional
+    public User registerUser(String email, String password, String name, String secondName, String surname, LocalDate dateOfBirth){
         if(userRepo.existsByEmail(email)){
             throw new EmailAlreadyExistsException();
         }
 
         User user = new User();
+
         user.setEmail(email);
         user.setPassword(passwordEncoder.encode(password));
+        user.setName(name);
+        user.setSecondName(secondName);
+        user.setSurname(surname);
+        user.setDateOfBirth(dateOfBirth);
         user.setVerificationCode(UUID.randomUUID().toString());
         User result = userRepo.save(user);
-
         mailService.sendVerificationEmail(result);
 
         return result;
@@ -86,6 +91,7 @@ public class AuthService {
         user.setEnabled(true);
         user.setVerificationCode(null);
         userRepo.save(user);
+        System.out.println("CODE = " + verificationCode);
         UserDetails userDetails = authUserDetailsService.loadUserByUsername(user.getEmail());
         Authentication authentication = new UsernamePasswordAuthenticationToken(
                 userDetails,

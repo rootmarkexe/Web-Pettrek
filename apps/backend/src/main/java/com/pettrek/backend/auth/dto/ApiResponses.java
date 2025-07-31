@@ -3,7 +3,7 @@ package com.pettrek.backend.auth.dto;
 
 
 
-public record ApiResponse (
+public record ApiResponses (
     Integer status,
     String message
 ){}
