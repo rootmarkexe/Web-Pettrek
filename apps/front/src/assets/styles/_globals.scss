@@ -1,0 +1,41 @@
+@import 'mixins';
+
+body{
+    font-family: var(--main-font), sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 100%;
+    color: var(--black-text-color);
+    background-color: var(--background-color);
+}
+
+a,
+button,
+input,
+textarea, 
+svg * {
+    transition-duration: var(--transition);
+}
+
+h1,h2,h3,h4,h5,h6{
+    font-family: var(--alternate-font);
+}
+
+a{
+    text-decoration: none;
+    color: inherit;
+}
+
+h1{
+    @include fluid-text(64, 40); //исправить как будет мобтльная версия
+}
+
+button{
+    @include fluid-text(24, 18); //исправить как будет мобтльная версия
+}
+li{
+    @include fluid-text(32, 26); //исправить как будет мобтльная версия
+}
+img{
+  -webkit-user-drag: none;
+}
