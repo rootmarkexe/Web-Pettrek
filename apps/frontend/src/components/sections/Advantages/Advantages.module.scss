@@ -1,0 +1,44 @@
+@use 'assets/styles/_mixins.scss' as *;
+.advantages{
+    padding-top: calc(var(--section-padding-y) + 24px);
+    display: flex;
+    justify-content: center;
+    position: relative;
+    max-width: 1410px;
+    margin: auto;
+    z-index: -1;
+    padding-bottom: var(--section-padding-y);
+    &__backgroundLogo{
+        @include abs-center;
+    }
+   &__quickRecording{
+    position: absolute;
+    left: 4%;
+    top: 18%;
+   }
+   &__emergencyAssistance{
+    position: absolute;
+    left: 1%;
+    top: 37%;
+   }
+   &__actuallyBase{
+    position: absolute;
+    left: 4%;
+    bottom: 20%;
+   }
+   &__onlineOrder{
+    position: absolute;
+    right: 4%;
+    top: 18%;
+   }
+   &__usefulTips{
+    position: absolute;
+    right: 1%;
+    top: 37%;
+   }
+   &__personalAccount{
+    position: absolute;
+    right: 4%;
+    bottom: 18%;
+   }
+}

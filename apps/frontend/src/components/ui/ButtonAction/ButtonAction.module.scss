@@ -1,0 +1,16 @@
+@use 'assets/styles/_mixins.scss' as *;
+.buttonAction{
+    @include square(44px);
+    background-color: var(--light-green-elements);
+    border-radius: 50%;
+    position: relative;
+    &::after{
+        content: url('assets/icons/arrow.svg');
+        position: absolute;
+        width: 24px;
+        height: 24px;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        }
+}

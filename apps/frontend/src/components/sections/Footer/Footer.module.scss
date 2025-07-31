@@ -1,0 +1,13 @@
+.footer{
+    background-color: var(--light-green-elements);
+    &__inner{
+        padding: 22px 0 22px 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    &__contacts{
+        display: flex;
+        column-gap: 15px;
+    }
+}
