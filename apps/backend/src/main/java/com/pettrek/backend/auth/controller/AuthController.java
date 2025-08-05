@@ -4,6 +4,7 @@ import com.pettrek.backend.auth.dto.*;
 import com.pettrek.backend.auth.models.User;
 import com.pettrek.backend.auth.services.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -41,12 +42,13 @@ public class AuthController {
             )
     )
     @ApiResponse(
-            responseCode = "200",
+            responseCode = "204",
             description = "Успешная аутентификация",
-            content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = AuthTokensResponse.class)
-            )
+            headers = {
+                    @Header(name = "Authorization", description = "Bearer access token"),
+                    @Header(name = "X-Refresh-Token", description = "Refresh token для получения новых access токенов"),
+                    @Header(name = "X-Access-Token-Expires-In", description = "Время жизни access токена в секундах")
+            }
     )
     @ApiResponse(
             responseCode = "400",
@@ -121,7 +123,11 @@ public class AuthController {
     )
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest){
         AuthTokensResponse tokens = authService.authenticateUser(loginRequest.email(),loginRequest.password());
-        return ResponseEntity.ok(tokens);
+        return ResponseEntity.noContent()
+                .header("Authorization", "Bearer " + tokens.accessToken())
+                .header("X-Refresh-Token", tokens.refreshToken())
+                .header("X-Access-Token-Expires-In", String.valueOf(tokens.expiresIn()))
+                .build();
     }
 
     @PostMapping("/signup")
@@ -222,12 +228,13 @@ public class AuthController {
     @GetMapping("/verify")
     @Operation(summary = "Верификация email", description = "Подтверждает email пользователя по коду")
     @ApiResponse(
-            responseCode = "200",
+            responseCode = "204",
             description = "Email успешно подтвержден",
-            content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = AuthTokensResponse.class)
-            )
+            headers = {
+                    @Header(name = "Authorization", description = "Новый Bearer access token"),
+                    @Header(name = "X-Refresh-Token", description = "Новый refresh token"),
+                    @Header(name = "X-Access-Token-Expires-In", description = "Время жизни access токена в секундах")
+            }
     )
     @ApiResponse(
             responseCode = "400",
@@ -282,7 +289,11 @@ public class AuthController {
     )
     public ResponseEntity<?> verifyEmail(@RequestParam String code){
         AuthTokensResponse tokens = authService.verifyEmail(code);
-        return ResponseEntity.ok(tokens);
+        return ResponseEntity.noContent()
+                .header("Authorization", "Bearer " + tokens.accessToken())
+                .header("X-Refresh-Token", tokens.refreshToken())
+                .header("X-Access-Token-Expires-In", String.valueOf(tokens.expiresIn()))
+                .build();
     }
     @PostMapping("/password/reset-request")
     @ApiResponse(
@@ -353,12 +364,13 @@ public class AuthController {
     @PostMapping("/password/reset")
     @Operation(summary = "Сброс пароля", description = "Устанавливает новый пароль по токену")
     @ApiResponse(
-            responseCode = "200",
+            responseCode = "204",
             description = "Пароль успешно изменен",
-            content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = AuthTokensResponse.class)
-            )
+            headers = {
+                    @Header(name = "Authorization", description = "Новый Bearer access token"),
+                    @Header(name = "X-Refresh-Token", description = "Новый refresh token"),
+                    @Header(name = "X-Access-Token-Expires-In", description = "Время жизни access токена в секундах")
+            }
     )
     @ApiResponse(
             responseCode = "400",
@@ -416,7 +428,11 @@ public class AuthController {
                 newPasswordRequest.token(),
                 newPasswordRequest.newPassword()
         );
-        return ResponseEntity.ok(tokens);
+        return ResponseEntity.noContent()
+                .header("Authorization", "Bearer " + tokens.accessToken())
+                .header("X-Refresh-Token", tokens.refreshToken())
+                .header("X-Access-Token-Expires-In", String.valueOf(tokens.expiresIn()))
+                .build();
     }
 
     @PostMapping("/refresh-token")
@@ -483,18 +499,23 @@ public class AuthController {
     )
     public ResponseEntity<?> refreshToken(@Valid @RequestBody RefreshTokenRequest refreshTokenRequest){
         AuthTokensResponse tokens = authService.refreshToken(refreshTokenRequest.refreshToken());
-        return ResponseEntity.ok(tokens);
+        return ResponseEntity.noContent()
+                .header("Authorization", "Bearer " + tokens.accessToken())
+                .header("X-Refresh-Token", tokens.refreshToken())
+                .header("X-Access-Token-Expires-In", String.valueOf(tokens.expiresIn()))
+                .build();
     }
 
     @PostMapping("/logout")
     @Operation(summary = "Выход из системы", description = "Уничтожает refresh token")
     @ApiResponse(
-            responseCode = "200",
+            responseCode = "204",
             description = "Успешный выход из системы",
-            content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = String.class, example = "Пользователь успешно вышел!")
-            )
+            headers = {
+                    @Header(name = "Authorization", description = "Новый Bearer access token"),
+                    @Header(name = "X-Refresh-Token", description = "Новый refresh token"),
+                    @Header(name = "X-Access-Token-Expires-In", description = "Время жизни access токена в секундах")
+            }
     )
     @ApiResponse(
             responseCode = "400",
