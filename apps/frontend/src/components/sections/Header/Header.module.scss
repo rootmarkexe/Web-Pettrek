@@ -1,0 +1,27 @@
+.header {
+  max-width: 1054px;
+  margin: 0 auto;
+  padding-inline: var(--container-padding-x);
+  &__inner {
+    background-color: var(--light-grey-elements);
+    border: none;
+    border-radius: var(--little-radius);
+    width: 100%;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 102px 0 14px;
+    & > :first-child {
+      padding-top: 6px;
+    }
+  }
+  &__nav{
+    padding-top: 18px;
+    padding-bottom: 18px;
+    &List{
+        display: flex;
+        align-items: center;
+        column-gap: 36px;
+    }
+  }
+}

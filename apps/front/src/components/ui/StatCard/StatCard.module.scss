@@ -1,0 +1,40 @@
+@use 'assets/styles/_mixins.scss' as *;
+.statItem{
+    position: relative;
+    &::before{
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 7px;
+            background-color: var(--light-green-elements);
+            top: -7px;
+            border-radius: 7px;
+        }
+   
+    
+    &__subtitle{
+        text-transform: uppercase;
+        font-family: var(--alternate-font);
+        font-size: 32px;
+        padding-left: 10px;
+        padding-bottom: 13px;
+        padding-top: 6px;
+    }
+    &__statsValue{
+        display: inline-block;
+        width: 96px;
+        height: 26px;
+        position: absolute;
+        right: 13.74%;
+        top: 18px;
+        font-size: 16px;
+        border: 1px solid var(--black-text-color);
+        border-radius: var(--large-radius);
+        text-align: center;
+    }
+    &__buttonActionContainer{
+        position: absolute;
+        right: 0;
+        top: 8px;
+    }
+}
