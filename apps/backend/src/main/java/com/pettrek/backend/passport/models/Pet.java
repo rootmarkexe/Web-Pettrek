@@ -1,12 +1,15 @@
 package com.pettrek.backend.passport.models;
 
+import com.pettrek.backend.auth.models.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDate;
 
 @Entity
+@DynamicUpdate
 @Table(name = "pets")
 @Getter
 @Setter
@@ -38,4 +41,11 @@ public class Pet {
 
     @Column(name = "Краткая характеристика")
     private String feature;
+
+    @Column(name = "Номер паспорта", unique = true)
+    private Integer passportNumber;
+
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="user_id")
+    private User user;
 }

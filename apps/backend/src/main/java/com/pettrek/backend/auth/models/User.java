@@ -1,10 +1,12 @@
 package com.pettrek.backend.auth.models;
 
+import com.pettrek.backend.passport.models.Pet;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import java.time.LocalDate;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import java.util.List;
 
 @Entity
 @Table(name = "auth_users")
@@ -39,4 +41,7 @@ public class User {
     @Column(name="dateOfBirth", nullable = false)
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateOfBirth;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Pet> pets;
 }
