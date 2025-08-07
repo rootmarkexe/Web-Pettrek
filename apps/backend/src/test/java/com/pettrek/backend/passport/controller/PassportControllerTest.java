@@ -12,7 +12,7 @@ import com.pettrek.backend.passport.dto.PassportResponse;
 import com.pettrek.backend.passport.dto.PetDto;
 import com.pettrek.backend.passport.mapper.PetMapper;
 import com.pettrek.backend.passport.models.Pet;
-import com.pettrek.backend.passport.services.PassportService;
+import com.pettrek.backend.passport.services.PetPassportServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -51,7 +51,7 @@ public class PassportControllerTest {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private PassportService passportService;
+    private PetPassportServiceImpl passportService;
 
     @Autowired
     private UserRepo userRepo;
@@ -66,8 +66,8 @@ public class PassportControllerTest {
     @TestConfiguration
     static class TestConfig {
         @Bean
-        public PassportService passportService() {
-            return Mockito.mock(PassportService.class);
+        public PetPassportServiceImpl passportService() {
+            return Mockito.mock(PetPassportServiceImpl.class);
         }
 
         @Bean
@@ -126,7 +126,7 @@ public class PassportControllerTest {
                 "user@example.com", List.of(pet1,pet2)
         );
 
-        given(passportService.getUserWithPets(TEST_USER_ID)).willReturn(expectedResponse);
+        given(passportService.getUserWithPets()).willReturn(expectedResponse);
 
         mockMvc.perform(get("/api/passport/GetPassport")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -165,7 +165,7 @@ public class PassportControllerTest {
 
         Pet expectedResponse = PetMapper.toEntity(pet1);
 
-        given(passportService.createPet(pet1)).willReturn(expectedResponse);
+        given(passportService.createPetPassport(pet1)).willReturn(expectedResponse);
 
         mockMvc.perform(post("/api/passport/create-passport")
                         .with(csrf())
