@@ -12,29 +12,6 @@
         flex-direction: row;
         justify-content: center;
     }
-    &__imagePhonesWithPettrek {
-        position: relative;
-        display: inline-block;
-    }
-    &__imagePhones{
-        margin-left: 10%;
-    }
-    &__pDownload{
-        position: absolute;
-        bottom: -2.5%;
-        left: 65%;
-        transform: translateX(-50%); 
-        text-align: center;
-        text-transform: uppercase;
-        font-family: var(--alternate-font);
-        
-    }
-    &__pDownloadLink{
-        & > span{
-            color: var(--green-text-color);
-            margin-right: 7px;
-        }
-    }
     &__statsContainer{
         width: 80%;
         &:last-child{

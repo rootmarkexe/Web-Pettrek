@@ -1,7 +1,7 @@
 import React from 'react'
 import classes from 'components/sections/about/About.module.scss'
 import StatCard from 'components/ui/StatCard'
-import phonesImage from 'assets/images/phonesWithPettrek.png'
+import DownloadApp from 'components/ui/DownloadApp/DownloadApp'
 
 const ABOUT_DATA = [
     {id: 1, value: '100+', lable: 'Клиники'},
@@ -28,13 +28,8 @@ export default function About() {
                     })}
                 </div>
             </div>
-            
-            <div className={classes.about__imagePhonesWithPettrek}>
-                <img className={classes.about__imagePhones}  src={phonesImage} alt="Экраны приложения"/>
-                <div className={classes.about__pDownload}>
-                    <a aria-label="Скачать Pettrek для iOS и Android" className={classes.about__pDownloadLink} href="#"><span>Скачать </span> приложение</a>
-                </div>
-            </div>
+            <div className={classes.about__downloadAppContainer}></div>
+            <DownloadApp/>
         </div>
     </section>
   )
