@@ -23,7 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import com.pettrek.backend.passport.services.PassportService;
+import com.pettrek.backend.passport.services.PetPassportServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +35,7 @@ import java.util.Optional;
 @Tag(name = "Паспорта животных", description = "Управление паспортами питомцев")
 public class PassportController {
 
-    private final IPassportService passportService;
+    private final PetPassportServiceImpl passportService;
 
     @GetMapping("/GetPassport")
     @Operation(
@@ -103,7 +103,7 @@ public class PassportController {
             )
     )
 
-            @ApiResponse(responseCode = "200", description = "Питомец добавлен", content = @Content(
+            @ApiResponse(responseCode = "201", description = "Питомец добавлен", content = @Content(
                     mediaType = "application/json",
                     schema = @Schema(implementation = ApiResponses.class),
                     examples = @ExampleObject(
@@ -122,10 +122,40 @@ public class PassportController {
         );
         return new ResponseEntity<>(new ApiResponses(201, "Питомец добавлен"), HttpStatus.CREATED);
     }
+    @Operation(
+            summary = "Создать паспорт питомца",
+            description = "Добавляет нового питомца в систему"
+    )
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            description = "Данные питомца",
+            required = true,
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = PetDto.class),
+                    examples = @ExampleObject(
+                            name = "Пример запроса",
+                            value = """
+                    {
+                        "name": "Барсик",
+                        "specie": "Собака",
+                        "gender": "Мужской",
+                        "dateOfBirth": "2020-05-15",
+                        "breed": "Британская",
+                        "hair": "Короткошерстный",
+                        "weight": 4.5,
+                        "feature": "Любит спать"
+                    }
+                    """
+                    )
+            )
+    )
 
+    @ApiResponse(responseCode = "204", description = "Питомец изменен", content = @Content(
+            mediaType = "application/json"
+    ))
     @PatchMapping("/edit-passport/{passportNumber}")
     public ResponseEntity<?> editPetPassport(@Valid @RequestBody PetDto petDto, @PathVariable Integer passportNumber){
-        Pet updatePet = passportService.updatePet(petDto, passportNumber);
+        Pet updatePet = passportService.updatePetPassport(passportNumber, petDto);
         return ResponseEntity.noContent().build();
     }
 }
