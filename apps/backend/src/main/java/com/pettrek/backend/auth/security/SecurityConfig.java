@@ -52,13 +52,19 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .exceptionHandling(handling -> handling
                         .authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
+                .authorizeHttpRequests(auth -> auth.requestMatchers("/api/auth/**","/swagger-ui/**","/swagger-ui.html",
+                                "/Web-Pettrek/apps/backend/config/**","/webjars/**",
+                                "/swagger-resources/**","/v3/api-docs/**","/webjars/**",
+                                "/swagger-resources/**",
+                                "/swagger-config",
+                                "/favicon.*",
+                                "/error").permitAll()
+                .requestMatchers("/api/passport/**").authenticated());
 
 
 
