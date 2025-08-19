@@ -1,0 +1,12 @@
+.select{
+    max-width: 67px;
+    font-size: 14px;
+    height: var(--button-height);
+    border-radius: var(--input-radius);
+    border: 4px solid var(--green-text-color);
+    text-align: center;
+    outline: none;
+    &:last-child{
+        max-width: 135px;
+    }
+}

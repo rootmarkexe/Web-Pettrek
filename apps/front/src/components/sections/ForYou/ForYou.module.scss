@@ -1,0 +1,44 @@
+.ForYou{
+    padding-bottom: 74px;
+    text-transform: uppercase;
+    &__description{
+        color: var(--grey-green-elements);
+        font-size: 15px;
+        margin-bottom: 19px;
+    }
+    &__title{
+        font-size: 64px;
+        margin-bottom: 28px;
+        & > span{
+            color: var(--grey-text-color);
+        }
+    }
+    &__firstGrid {
+        display: grid;
+        grid-template: 
+            "map clinics petShops" 177px
+            "map clinics account" 177px / auto auto auto;
+            row-gap: 30px;
+            column-gap: 29px;
+    }
+    &__map{
+        grid-area: map;
+    }
+    &__clinics{
+        grid-area: clinics;
+    }
+    &__petShops{
+        grid-area: petShops;
+    }
+    &__account{
+        grid-area: account;
+        
+    }
+    &__secondGrid{
+        margin-top: 50px;
+        display: grid;
+        grid-template: 
+            "map clinics account" 237px / auto auto auto;
+            column-gap: 40px;
+    }
+}
