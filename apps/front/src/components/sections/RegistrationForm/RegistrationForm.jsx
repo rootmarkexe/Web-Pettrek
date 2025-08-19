@@ -55,7 +55,8 @@ const INITIAL_STATE = {
           setError(error);
           return;
       }
-      store.registration(form.fullName, form.birthday, form.email, form.password);
+  
+      store.registration(form.email, form.password);
       setError(null);
       setForm(INITIAL_STATE);
     }
