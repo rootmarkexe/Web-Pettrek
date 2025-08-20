@@ -17,6 +17,9 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name="auth_user_id", nullable = false)
+    private Long authUserId;
+
     @Column(name = "password",nullable = false)
     private String password;
 
@@ -29,19 +32,5 @@ public class User {
     private String verificationCode;
 
     private String resetPasswordToken;
-    @Column(name = "Name",nullable=false)
-    private String name;
 
-    @Column(name="secondName", nullable = false)
-    private String secondName;
-
-    @Column(name="surname", nullable = true)
-    private String surname;
-
-    @Column(name="dateOfBirth", nullable = false)
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate dateOfBirth;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Pet> pets;
 }

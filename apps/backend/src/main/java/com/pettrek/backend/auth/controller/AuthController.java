@@ -217,11 +217,7 @@ public class AuthController {
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest){
         User user = authService.registerUser(
                 signUpRequest.email(),
-                signUpRequest.password(),
-                signUpRequest.name(),
-                signUpRequest.secondName(),
-                signUpRequest.surname(),
-                signUpRequest.dateOfBirth()
+                signUpRequest.password()
         );
         return ResponseEntity.ok(new ApiResponses(200, "Проверьте вашу почту"));
     }
