@@ -62,7 +62,7 @@ public class AuthService {
         );}catch(BadCredentialsException ex) {throw new InvalidCredentialsException();}
     }
     @Transactional
-    public User registerUser(String email, String password, String name, String secondName, String surname, LocalDate dateOfBirth){
+    public User registerUser(String email, String password){
         if(userRepo.existsByEmail(email)){
             throw new EmailAlreadyExistsException();
         }
@@ -71,10 +71,6 @@ public class AuthService {
 
         user.setEmail(email);
         user.setPassword(passwordEncoder.encode(password));
-        user.setName(name);
-        user.setSecondName(secondName);
-        user.setSurname(surname);
-        user.setDateOfBirth(dateOfBirth);
         user.setVerificationCode(UUID.randomUUID().toString());
         User result = userRepo.save(user);
         mailService.sendVerificationEmail(result);

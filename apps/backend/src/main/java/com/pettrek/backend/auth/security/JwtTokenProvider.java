@@ -102,6 +102,7 @@ public class JwtTokenProvider {
     public void deleteRefreshToken(Long userId) {
         redisTemplate.delete("refresh:" + userId);
     }
+
     public Long getUserIdFromJWT(String token){
         return Long.parseLong(
                 Jwts.parserBuilder()

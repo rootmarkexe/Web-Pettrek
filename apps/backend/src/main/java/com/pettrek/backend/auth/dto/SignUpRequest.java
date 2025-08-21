@@ -8,18 +8,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotNull;
 public record SignUpRequest(
     @NotBlank
-    String name,
-
-    @NotBlank
-    String secondName,
-
-    String surname,
-
-    @NotNull
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    LocalDate dateOfBirth,
-
-    @NotBlank
     @Email
     String email,
 

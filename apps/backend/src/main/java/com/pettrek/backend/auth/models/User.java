@@ -1,10 +1,12 @@
 package com.pettrek.backend.auth.models;
 
+import com.pettrek.backend.passport.models.Pet;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import java.time.LocalDate;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import java.util.List;
 
 @Entity
 @Table(name = "auth_users")
@@ -14,6 +16,9 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name="auth_user_id", nullable = false)
+    private Long authUserId;
 
     @Column(name = "password",nullable = false)
     private String password;
@@ -27,16 +32,5 @@ public class User {
     private String verificationCode;
 
     private String resetPasswordToken;
-    @Column(name = "Name",nullable=false)
-    private String name;
 
-    @Column(name="secondName", nullable = false)
-    private String secondName;
-
-    @Column(name="surname", nullable = true)
-    private String surname;
-
-    @Column(name="dateOfBirth", nullable = false)
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate dateOfBirth;
 }
