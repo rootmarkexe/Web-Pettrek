@@ -64,7 +64,8 @@ public class SecurityConfig {
                                 "/swagger-config",
                                 "/favicon.*",
                                 "/error").permitAll()
-                .requestMatchers("/api/passport/**").authenticated());
+                .requestMatchers("/api/passport/**",
+                        "/api/user-profile").authenticated());
 
 
 

@@ -5,6 +5,8 @@ import com.pettrek.backend.auth.dto.LoginRequest;
 import com.pettrek.backend.user.dto.UserProfileDto;
 import com.pettrek.backend.user.services.UserProfileService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -30,6 +32,13 @@ public class UserProfileController {
 
     @PostMapping("")
     @Operation(summary = "Первичное создание пользователя")
+    @Parameter(
+            name = "Authorization",
+            description = "Bearer токен для авторизации",
+            required = true,
+            in = ParameterIn.HEADER,
+            example = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+    )
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
             description = "Данные для создания профиля",
             content = @Content(
@@ -38,7 +47,7 @@ public class UserProfileController {
                     examples = {
                             @ExampleObject(
                                     name = "Пример запроса",
-                                    value = "{\"SecondName\": \"Теплов\", \"name\": \"Иван\", \"surname\": \"Андреевич\", \"dateOfBirth\": \"26-08-2005\", \"city\": \"Кемерово\"}",
+                                    value = "{\"secondName\": \"Теплов\", \"name\": \"Иван\", \"surname\": \"Андреевич\", \"dateOfBirth\": \"2005-08-26\", \"city\": \"Кемерово\"}",
                                     summary = "Стандартное создание провиля"
                             )
                     }

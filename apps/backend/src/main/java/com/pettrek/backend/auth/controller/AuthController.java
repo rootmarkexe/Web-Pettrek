@@ -140,7 +140,7 @@ public class AuthController {
                     examples = {
                             @ExampleObject(
                                     name = "Пример запроса",
-                                    value = "{\"name\": \"User\", \"secondName\": \"Example\", \"surname\": \"Mock\", \"dateOfBirth\": \"1995-01-01\", \"email\": \"user@example.com\", \"password\": \"password123!\"}",
+                                    value = "\"{\\\"email\\\": \\\"user@example.com\\\", \\\"password\\\": \\\"password123!\\\"}\"",
                                     summary = "Новый пользователь"
                             )
                     }
