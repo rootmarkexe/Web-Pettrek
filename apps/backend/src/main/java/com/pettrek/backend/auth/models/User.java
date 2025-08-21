@@ -1,6 +1,6 @@
 package com.pettrek.backend.auth.models;
 
-import com.pettrek.backend.passport.models.Pet;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
